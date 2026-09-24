@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 예비평
 
-## Getting Started
+예비군 훈련장 운영 경험을 익명 객관식 평가로 공유하는 서비스입니다.
 
-First, run the development server:
+서비스 요구사항과 현재 범위는 [docs/plan.md](docs/plan.md)를 기준으로 합니다.
+
+## 기술 스택
+
+- Next.js App Router, TypeScript
+- Tailwind CSS 4, Seed Design
+- Supabase
+
+## 시작하기
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+개발 서버는 [http://localhost:3000](http://localhost:3000)에서 확인할 수 있습니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 명령어
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev    # 개발 서버
+npm run build  # 프로덕션 빌드
+npm run start  # 프로덕션 서버
+npm run lint   # ESLint
+```
 
-## Learn More
+## 주요 경로
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `src/app`: App Router 앱 코드
+- `src/seed-design`: Seed Design CLI로 추가하는 컴포넌트 경로
+- `docs/plan.md`: 서비스 요구사항
