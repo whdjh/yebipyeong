@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>예비평 · 화면 목업</title>
+    <style>
+      :root {
+        font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+        color: #202020;
+        background: #f3f3f3;
+        color-scheme: light;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button, input, select { font: inherit; }
+      button, a { -webkit-tap-highlight-color: transparent; }
+      button { cursor: pointer; }
+      [hidden] { display: none !important; }
+      .gallery { max-width: 1280px; margin: auto; padding: 28px 16px 48px; }
+      .gallery-title { margin: 0; font-size: 20px; }
+      .gallery-note { margin: 6px 0 28px; color: #727272; font-size: 13px; }
+      .preview-controls { display: flex; gap: 8px; margin-bottom: 28px; }
+      .preview-controls button { min-height: 44px; border: 1px solid #ccc; border-radius: 8px; padding: 8px 14px; background: #fff; color: #636363; font-size: 13px; }
+      .preview-controls button[aria-pressed="true"] { border-color: #252525; background: #252525; color: #fff; }
+      .mockups { display: grid; gap: 32px; }
+      .mockup { width: 100%; max-width: 1120px; margin: auto; }
+      body[data-preview="mobile"] .mockup { max-width: 390px; }
+      .mockup > h2 { margin: 0 0 12px; font-size: 15px; font-weight: 600; }
+      .screen {
+        position: relative;
+        height: 780px;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        border-radius: 16px;
+        background: #fff;
+        container-type: inline-size;
+      }
+      .page { height: 100%; overflow-y: auto; padding: 32px 20px 104px; }
+      h3 { margin: 0; font-size: 25px; line-height: 1.4; letter-spacing: -.045em; }
+      p { margin: 0; }
+      .muted { color: #727272; font-size: 14px; }
+      .intro { margin: 8px 0 26px; }
+      .input {
+        width: 100%; min-height: 52px; padding: 12px;
+        border: 1px solid #ccc; border-radius: 10px; background: #fff; color: inherit;
+      }
+      .input::placeholder { color: #858585; font-size: 13px; }
+      :focus-visible { outline: 2px solid #d85b16; outline-offset: 3px; }
+      .hint { margin: 9px 0 26px; color: #727272; font-size: 13px; }
+      .label { display: block; margin-bottom: 9px; font-size: 14px; font-weight: 600; }
+      .place {
+        display: flex; align-items: center; justify-content: space-between;
+        min-height: 84px; border-bottom: 1px solid #eee;
+        color: inherit; text-decoration: none;
+      }
+      .place strong { display: block; font-size: 16px; font-weight: 600; }
+      .place small { display: block; margin-top: 4px; font-size: 13px; color: #727272; }
+      .place-info { flex: 1; min-width: 0; }
+      .evaluation-count { color: #727272; }
+      .place-stats { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 10px; font-size: 13px; }
+      .chevron { color: #888; font-size: 22px; }
+      .back, .text-button { min-height: 44px; border: 0; padding: 0; background: none; color: #636363; font-size: 14px; }
+      .back { display: inline-flex; align-items: center; margin: -12px 0 16px; text-decoration: none; }
+      .address { margin: 8px 0 30px; }
+      .section-title { margin: 0 0 16px; font-size: 16px; font-weight: 600; }
+      .detail-stats { margin: 0 0 20px; }
+      .evaluation { border-top: 1px solid #eee; padding-top: 20px; }
+      .evaluation-summary { display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 14px; }
+      .answers { margin: 0; }
+      .answers div { padding: 14px 0; border-bottom: 1px solid #eee; }
+      .answers dt { color: #727272; font-size: 13px; }
+      .answers dd { margin: 5px 0 0; font-size: 15px; }
+      .action { padding: 12px 20px calc(16px + env(safe-area-inset-bottom)); background: #fff; }
+      .page-action { position: absolute; bottom: 0; right: 0; left: 0; }
+      .primary {
+        display: flex; align-items: center; justify-content: center;
+        width: 100%; min-height: 52px; border: 0; border-radius: 10px;
+        color: #fff; background: #252525; text-decoration: none; font-size: 15px; font-weight: 600;
+      }
+      .primary:disabled { background: #e9e9e9; color: #888; cursor: default; }
+      .shade { position: absolute; inset: 0; background: rgb(0 0 0 / 38%); }
+      .sheet {
+        position: absolute; bottom: 0; right: 0; left: 0;
+        display: flex; flex-direction: column; max-height: 93%;
+        border-radius: 18px 18px 0 0; background: #fff; overflow: hidden;
+      }
+      .sheet-top { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px 0 20px; }
+      .step { color: #727272; font-size: 13px; }
+      .close { width: 44px; height: 44px; border: 0; background: none; font-size: 25px; color: #555; }
+      .sheet-body { overflow-y: auto; padding: 8px 20px 16px; }
+      .sheet h3 { font-size: 22px; margin-bottom: 24px; }
+      fieldset { min-width: 0; border: 0; padding: 0; margin: 0 0 24px; }
+      legend { width: 100%; margin-bottom: 10px; padding: 0; font-size: 15px; font-weight: 600; }
+      .choices { display: grid; gap: 8px; }
+      .choice { display: flex; align-items: center; gap: 10px; min-height: 48px; border: 1px solid #ddd; border-radius: 10px; padding: 11px 12px; font-size: 14px; cursor: pointer; }
+      .choice:has(:checked) { border-color: #252525; background: #f7f7f7; }
+      .choice input { width: 18px; height: 18px; flex: 0 0 auto; margin: 0; accent-color: #252525; }
+      .period { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .question { padding-bottom: 22px; margin-bottom: 22px; border-bottom: 1px solid #eee; }
+      .question:last-child { margin-bottom: 0; border-bottom: 0; }
+      .question legend { line-height: 1.5; }
+      .sheet .action { border-top: 1px solid #eee; }
+      @container (min-width: 650px) {
+        .page { padding: 48px max(32px, calc((100cqw - 800px) / 2)) 104px; }
+        h3 { font-size: 30px; }
+        .page-action { padding-inline: max(32px, calc((100cqw - 800px) / 2)); }
+        .page-action .primary { max-width: 240px; margin-left: auto; }
+        .page > .primary { max-width: 240px; }
+        .place-info { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 24px; }
+        .place-info > strong, .place-info > small { grid-column: 1; }
+        .place-info > small { margin-top: 0; }
+        .place-info > .place-stats { grid-column: 2; grid-row: 1 / span 2; align-self: center; margin: 0; }
+        .sheet { width: 480px; max-height: 90%; top: 50%; left: 50%; right: auto; bottom: auto; transform: translate(-50%, -50%); border-radius: 16px; }
+      }
+      @media (min-width: 1080px) {
+        body[data-preview="mobile"] .mockups { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; }
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        html { scroll-behavior: smooth; }
+      }
+    </style>
+  </head>
+  <body data-preview="responsive">
+    <main class="gallery">
+      <h1 class="gallery-title">예비평 · 화면 목업</h1>
+      <p class="gallery-note">리스트·작성 모달·상세 반응형 목업 · 표시된 훈련장과 평가는 예시입니다.</p>
+      <div class="preview-controls" role="group" aria-label="목업 보기 방식">
+        <button type="button" data-preview-mode="responsive" aria-pressed="true">화면에 맞춤</button>
+        <button type="button" data-preview-mode="mobile" aria-pressed="false">모바일 폭으로 보기</button>
+      </div>
+      <div class="mockups">
+        <section class="mockup" id="list-preview" aria-labelledby="list-label">
+          <h2 id="list-label">01 · 리스트 페이지</h2>
+          <div class="screen">
+            <div class="page">
+              <h3>어디에서 훈련받으셨나요?</h3>
+              <p class="muted intro">훈련장 운영 경험을 찾아보세요.</p>
+              <label class="label" for="place-search">훈련장 검색</label>
+              <input class="input" id="place-search" type="search" placeholder="안내받은 훈련장명 또는 주소를 입력해주세요." />
+              <p class="hint">알림톡이나 소집통지서에 적힌 내용을 그대로 입력해도 돼요.</p>
+              <a class="place" id="place-result" href="#detail-preview">
+                <span class="place-info">
+                  <strong>OO동원훈련장</strong>
+                  <small>경기도 이천시 OO로 123</small>
+                  <span class="place-stats"><span class="evaluation-count">평가 24개</span><span>추천 18 : 비추천 6</span></span>
+                </span>
+                <span class="chevron" aria-hidden="true">›</span>
+              </a>
+              <p class="muted" id="no-results" hidden>검색 결과가 없어요. 훈련장명이나 주소를 다시 확인해주세요.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="mockup" id="modal-preview" aria-labelledby="modal-label">
+          <h2 id="modal-label">02 · 평가 작성 모달</h2>
+          <div class="screen">
+            <div class="page">
+              <h3>OO동원훈련장</h3>
+              <p class="muted address">경기도 이천시 OO로 123</p>
+              <button class="primary" id="reopen-modal" type="button">평가 작성</button>
+            </div>
+            <div class="shade" id="modal-shade"></div>
+            <section class="sheet" id="evaluation-sheet" aria-label="평가 작성 모달 미리보기">
+              <div class="sheet-top">
+                <span class="step" id="step-label">1 / 2 · 훈련 정보</span>
+                <button class="close" id="close-modal" type="button" aria-label="평가 작성 닫기">×</button>
+              </div>
+              <div class="sheet-body" id="sheet-body">
+                <form id="info-form">
+                  <h3>훈련 정보를 알려주세요</h3>
+                  <fieldset>
+                    <legend>훈련장</legend>
+                    <input class="input" name="venue" aria-label="훈련장명 또는 주소" list="venues" value="OO동원훈련장" required />
+                    <datalist id="venues"><option value="OO동원훈련장">경기도 이천시 OO로 123</option></datalist>
+                  </fieldset>
+                  <fieldset>
+                    <legend>훈련 종류</legend>
+                    <div class="choices">
+                      <label class="choice"><input type="radio" name="kind" value="mobilization" required /><span>동원훈련</span></label>
+                      <label class="choice"><input type="radio" name="kind" value="commuting" required /><span>동미참훈련</span></label>
+                      <label class="choice"><input type="radio" name="kind" value="operation" required /><span>작계훈련</span></label>
+                    </div>
+                  </fieldset>
+                  <fieldset>
+                    <legend>훈련 시기</legend>
+                    <div class="period">
+                      <label><span class="label">연도</span><select class="input" name="year" required><option value="">연도 선택</option><option>2026</option><option>2025</option><option>2024</option></select></label>
+                      <label><span class="label">월</span><select class="input" name="month" id="month-select" required><option value="">월 선택</option></select></label>
+                    </div>
+                  </fieldset>
+                </form>
+                <form id="questions-form" hidden>
+                  <button class="back" id="edit-info" type="button">← 훈련 정보 수정</button>
+                  <h3>훈련은 어땠나요?</h3>
+                  <div id="questions"></div>
+                </form>
+              </div>
+              <div class="action">
+                <button class="primary" id="next-button" type="button" disabled>다음</button>
+                <button class="primary" id="complete-button" type="button" disabled hidden>완료</button>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="mockup" id="detail-preview" aria-labelledby="detail-label">
+          <h2 id="detail-label">03 · 상세 페이지</h2>
+          <div class="screen">
+            <div class="page">
+              <a class="back" href="#list-preview">← 훈련장 목록</a>
+              <h3>OO동원훈련장</h3>
+              <p class="muted address">경기도 이천시 OO로 123</p>
+              <h4 class="section-title">훈련장 평가</h4>
+              <p class="place-stats detail-stats"><span class="evaluation-count">평가 24개</span><span>추천 18 : 비추천 6</span></p>
+              <article class="evaluation" aria-label="작계훈련 평가 예시">
+                <div class="evaluation-summary"><strong>작계훈련</strong><span class="muted">2026년 9월</span></div>
+                <dl class="answers">
+                  <div><dt>훈련 중 산길이나 경사진 곳을 이동했나요?</dt><dd>안 했어요.</dd></div>
+                  <div><dt>이 훈련을 다른 예비군에게 추천하시나요?</dt><dd>추천해요.</dd></div>
+                </dl>
+              </article>
+            </div>
+            <div class="action page-action"><a class="primary" id="write-evaluation" href="#modal-preview">평가 작성</a></div>
+          </div>
+        </section>
+      </div>
+    </main>
+    <script>
+      document.querySelectorAll("[data-preview-mode]").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.body.dataset.preview = button.dataset.previewMode
+          document.querySelectorAll("[data-preview-mode]").forEach((option) => {
+            option.setAttribute("aria-pressed", String(option === button))
+          })
+        })
+      })
+      const exitOptions = ["조기 퇴소했어요.", "안내된 시간에 맞춰 퇴소했어요.", "안내된 시간보다 늦게 퇴소했어요."]
+      const recommendOptions = ["추천해요.", "추천하지 않아요."]
+      const recommendPlace = ["이 훈련장을 다른 예비군에게 추천하시나요?", recommendOptions]
+      const questionsByKind = {
+        mobilization: [
+          ["훈련은 어떻게 진행됐나요?", ["1~2일차에 주요 훈련을 집중해서 진행했어요.", "3일 동안 비교적 나눠서 진행했어요."]],
+          ["아침점호를 했나요?", ["했어요.", "안 했어요."]],
+          ["퇴소는 어떻게 진행됐나요?", exitOptions],
+          ["복장 규정은 어느 정도로 확인했나요?", ["거의 확인하지 않았어요.", "기본적인 복장만 확인했어요.", "고무링·전투모 등 세부 항목까지 엄격하게 확인했어요."]],
+          ["불침번이 있었나요?", ["있었어요.", "없었어요."]],
+          ["훈련은 어떻게 진행됐나요?", ["계획보다 과하게 진행됐어요.", "계획대로 진행됐어요.", "일부 축소해서 진행됐어요."]],
+          recommendPlace,
+        ],
+        commuting: [
+          ["훈련은 어떻게 진행됐나요?", ["4일 동안 서로 다른 훈련을 나눠서 진행했어요.", "비슷한 훈련을 반복해서 진행했어요."]],
+          ["퇴소는 어떻게 진행됐나요?", exitOptions],
+          recommendPlace,
+        ],
+        operation: [
+          ["훈련 중 산길이나 경사진 곳을 이동했나요?", ["했어요.", "안 했어요."]],
+          ["이 훈련을 다른 예비군에게 추천하시나요?", recommendOptions],
+        ],
+      }
+      const infoForm = document.querySelector("#info-form")
+      const questionsForm = document.querySelector("#questions-form")
+      const nextButton = document.querySelector("#next-button")
+      const completeButton = document.querySelector("#complete-button")
+      const sheet = document.querySelector("#evaluation-sheet")
+      const shade = document.querySelector("#modal-shade")
+      const stepLabel = document.querySelector("#step-label")
+
+      for (let month = 1; month <= 12; month += 1) {
+        document.querySelector("#month-select").add(new Option(`${month}월`, String(month)))
+      }
+
+      function infoComplete() {
+        return infoForm.checkValidity() && infoForm.elements.venue.value === "OO동원훈련장"
+      }
+
+      infoForm.addEventListener("input", () => { nextButton.disabled = !infoComplete() })
+      infoForm.addEventListener("submit", (event) => event.preventDefault())
+      questionsForm.addEventListener("submit", (event) => event.preventDefault())
+      questionsForm.addEventListener("change", () => { completeButton.disabled = !(infoComplete() && questionsForm.checkValidity()) })
+
+      function showInfo() {
+        infoForm.hidden = false
+        questionsForm.hidden = true
+        nextButton.hidden = false
+        completeButton.hidden = true
+        stepLabel.textContent = "1 / 2 · 훈련 정보"
+        document.querySelector("#sheet-body").scrollTop = 0
+      }
+
+      nextButton.addEventListener("click", () => {
+        const container = document.querySelector("#questions")
+        container.replaceChildren()
+        questionsByKind[infoForm.elements.kind.value].forEach(([title, options], index) => {
+          const fieldset = document.createElement("fieldset")
+          fieldset.className = "question"
+          const legend = document.createElement("legend")
+          legend.textContent = title
+          const choices = document.createElement("div")
+          choices.className = "choices"
+          options.forEach((option, value) => {
+            const label = document.createElement("label")
+            label.className = "choice"
+            const input = document.createElement("input")
+            input.type = "radio"
+            input.name = `answer-${index}`
+            input.value = String(value)
+            input.required = true
+            const text = document.createElement("span")
+            text.textContent = option
+            label.append(input, text)
+            choices.append(label)
+          })
+          fieldset.append(legend, choices)
+          container.append(fieldset)
+        })
+        infoForm.hidden = true
+        questionsForm.hidden = false
+        nextButton.hidden = true
+        completeButton.hidden = false
+        completeButton.disabled = true
+        stepLabel.textContent = "2 / 2 · 훈련 평가"
+        document.querySelector("#sheet-body").scrollTop = 0
+      })
+
+      document.querySelector("#edit-info").addEventListener("click", showInfo)
+      document.querySelector("#close-modal").addEventListener("click", () => { sheet.hidden = shade.hidden = true })
+      completeButton.addEventListener("click", () => { sheet.hidden = shade.hidden = true })
+      function openModal() {
+        sheet.hidden = shade.hidden = false
+        showInfo()
+      }
+      document.querySelector("#reopen-modal").addEventListener("click", openModal)
+      document.querySelector("#write-evaluation").addEventListener("click", openModal)
+      document.querySelector("#place-search").addEventListener("input", (event) => {
+        const query = event.target.value.trim().toLowerCase()
+        const match = "OO동원훈련장 OO예비군훈련장 경기도 이천시 OO로 123".toLowerCase().includes(query)
+        document.querySelector("#place-result").hidden = !match
+        document.querySelector("#no-results").hidden = match
+      })
+    </script>
+  </body>
+</html>
