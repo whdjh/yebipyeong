@@ -33,3 +33,12 @@ npm run lint   # ESLint
 - `src/app`: App Router 앱 코드
 - `src/seed-design`: Seed Design CLI로 추가하는 컴포넌트 경로
 - `docs/plan.md`: 서비스 요구사항
+
+## UI 미리보기
+
+- `/`: 훈련장 목록과 검색
+- `/training-centers/sample`: 예시 훈련장 상세 및 평가 작성 모달
+- `docs/mockup.html`: 초기 HTML 목업
+
+라이트 모드만 지원합니다. 현재 화면은 예시 데이터로 구성되어 있으며,
+검색과 선택, 작성 단계 전환은 브라우저에서만 동작합니다. 평가는 저장하지 않습니다.
