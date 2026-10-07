@@ -1,13 +1,4 @@
-// UI 검토용 예시. 실제 훈련장 정보나 저장된 평가가 아니다.
-export const previewCenter = {
-  name: "OO동원훈련장",
-  address: "경기도 이천시 OO로 123",
-  aliases: ["OO예비군훈련장"],
-  evaluations: 24,
-  recommended: 18,
-  notRecommended: 6,
-}
-
+// docs/plan.md에 정의된 실제 평가 문항과 선택지.
 const exitOptions = ["조기 퇴소했어요.", "안내된 시간에 맞춰 퇴소했어요.", "안내된 시간보다 늦게 퇴소했어요."]
 const recommendOptions = ["추천해요.", "추천하지 않아요."]
 const recommendPlace = { label: "추천 여부", question: "이 훈련장을 다른 예비군에게 추천하시나요?", options: recommendOptions }

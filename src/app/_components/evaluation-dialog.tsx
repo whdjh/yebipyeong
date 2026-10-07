@@ -1,30 +1,32 @@
 "use client"
 
-import { useRef, useState } from "react"
-import { ActionButton } from "@seed-design/react"
-import { previewCenter, trainingKinds, type TrainingKind } from "../_data/preview"
+import { useEffect, useRef, useState } from "react"
+import { actionButton } from "@seed-design/css/recipes/action-button"
+import { trainingKinds, type TrainingKind } from "../_data/evaluation-questions"
 import Icon from "./icon"
 
-export default function EvaluationDialog() {
+export default function EvaluationDialog({ center, onClose }: {
+  center: { name: string, address: string }
+  onClose: () => void
+}) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const [step, setStep] = useState<"info" | "questions">("info")
-  const [venue, setVenue] = useState(previewCenter.name)
+  const [venue, setVenue] = useState(center.name)
   const [kind, setKind] = useState<TrainingKind | "">("")
   const [year, setYear] = useState("")
   const [month, setMonth] = useState("")
   const [answers, setAnswers] = useState<Record<string, string>>({})
-  const [previewComplete, setPreviewComplete] = useState(false)
+  const [saveUnavailable, setSaveUnavailable] = useState(false)
   const selectedKind = kind ? trainingKinds[kind] : undefined
-  const infoComplete = venue === previewCenter.name && !!kind && !!year && !!month
+  const infoComplete = venue === center.name && !!kind && !!year && !!month
   const allAnswered = selectedKind?.questions.every((item) => answers[item.label] !== undefined) ?? false
 
-  function openDialog() {
-    setStep("info")
-    setPreviewComplete(false)
-    dialogRef.current?.showModal()
-    if (scrollRef.current) scrollRef.current.scrollTop = 0
-  }
+  useEffect(() => {
+    const dialog = dialogRef.current
+    dialog?.showModal()
+    return () => dialog?.close()
+  }, [])
 
   function changeStep(nextStep: "info" | "questions") {
     setStep(nextStep)
@@ -32,16 +34,14 @@ export default function EvaluationDialog() {
   }
 
   return (
-    <>
-      <div className="detail-action">
-        <div className="detail-action-inner"><ActionButton size="large" variant="neutralSolid" className="primary-button" onClick={openDialog}>평가 작성</ActionButton></div>
-      </div>
-      <dialog className="evaluation-dialog" ref={dialogRef} aria-labelledby="dialog-title" aria-describedby="dialog-description" onClose={() => setPreviewComplete(false)}>
+      <dialog className="evaluation-dialog" ref={dialogRef} aria-labelledby="dialog-title" aria-describedby="dialog-description" onClose={(event) => {
+        if (!event.currentTarget.open) onClose()
+      }}>
         <form className="evaluation-form" onSubmit={(event) => {
           event.preventDefault()
           if (!infoComplete) return
           if (step === "info") changeStep("questions")
-          else if (allAnswered) setPreviewComplete(true)
+          else if (allAnswered) setSaveUnavailable(true)
         }}>
           <div className="dialog-top">
             <span className="step-label"><span className="step-current">{step === "info" ? "01" : "02"}</span><span className="step-divider">/</span>02<span className="step-name">{step === "info" ? "훈련 정보" : "훈련 평가"}</span></span>
@@ -60,11 +60,11 @@ export default function EvaluationDialog() {
                   <label className="field-label" htmlFor="evaluation-venue">훈련장</label>
                   <div className="search-field compact">
                     <Icon name="search" />
-                    <input id="evaluation-venue" value={venue} onChange={(event) => setVenue(event.target.value)} list="preview-venues" placeholder="훈련장명 또는 주소" autoComplete="off" required />
-                    {venue === previewCenter.name && <Icon name="check" className="venue-check" />}
+                    <input id="evaluation-venue" value={venue} onChange={(event) => setVenue(event.target.value)} list="evaluation-venues" placeholder="훈련장명 또는 주소" autoComplete="off" required />
+                    {venue === center.name && <Icon name="check" className="venue-check" />}
                   </div>
-                  <datalist id="preview-venues"><option value={previewCenter.name}>{previewCenter.address}</option></datalist>
-                  <p className="field-hint">{venue === previewCenter.name ? previewCenter.address : "목록에서 훈련장을 선택해주세요."}</p>
+                  <datalist id="evaluation-venues"><option value={center.name}>{center.address}</option></datalist>
+                  <p className="field-hint">{venue === center.name ? center.address : "목록에서 훈련장을 선택해주세요."}</p>
                 </div>
                 <fieldset>
                   <legend>훈련 종류</legend>
@@ -98,7 +98,7 @@ export default function EvaluationDialog() {
                         <label className="answer-choice" key={option}>
                           <input type="radio" name={item.label} value={option} required checked={answers[item.label] === option} onChange={() => {
                             setAnswers({ ...answers, [item.label]: option })
-                            setPreviewComplete(false)
+                            setSaveUnavailable(false)
                           }} />
                           <span>{option}</span>
                         </label>
@@ -110,11 +110,10 @@ export default function EvaluationDialog() {
             )}
           </div>
           <div className="dialog-footer">
-            {previewComplete && <p className="completion-note" role="status">화면 미리보기로, 평가는 저장되지 않아요.</p>}
-            <ActionButton size="large" variant="neutralSolid" className="primary-button" type="submit" disabled={!infoComplete || (step === "questions" && !allAnswered)}>{step === "info" ? "다음" : "완료"}{step === "info" && <Icon name="right" width="16" height="16" />}</ActionButton>
+            {saveUnavailable && <p className="completion-note" role="status">평가 저장 기능이 아직 연결되지 않았어요.</p>}
+            <button className={`${actionButton({ size: "large", variant: "neutralSolid" })} primary-button`} type="submit" disabled={!infoComplete || (step === "questions" && !allAnswered)}>{step === "info" ? "다음" : "완료"}{step === "info" && <Icon name="right" width="16" height="16" />}</button>
           </div>
         </form>
       </dialog>
-    </>
   )
 }
