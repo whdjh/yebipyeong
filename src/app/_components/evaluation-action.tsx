@@ -9,7 +9,7 @@ const EvaluationDialog = dynamic(() => import("./evaluation-dialog"), {
   loading: () => <p className="dialog-loading" role="status">작성창을 불러오고 있어요.</p>,
 })
 
-export default function EvaluationAction({ center }: { center: { name: string, address: string } }) {
+export default function EvaluationAction({ center }: { center: { id: string, name: string, address: string } }) {
   const [open, setOpen] = useState(false)
 
   return (

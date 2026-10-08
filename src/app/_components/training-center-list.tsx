@@ -1,6 +1,8 @@
 import Form from "next/form"
 import Link from "next/link"
 import Icon from "./icon"
+import Pagination from "./pagination"
+import FreshLink from "./fresh-link"
 
 // 서버에서 렌더링할 목록의 표시 정보. DB 테이블 구조와는 별개다.
 export type TrainingCenterSummary = {
@@ -12,10 +14,12 @@ export type TrainingCenterSummary = {
   notRecommendedCount: number
 }
 
-export default function TrainingCenterList({ centers, query = "", loading = false }: {
+export default function TrainingCenterList({ centers, query = "", loading = false, error, pagination }: {
   centers: readonly TrainingCenterSummary[]
   query?: string
   loading?: boolean
+  error?: string
+  pagination?: { page: number, limit: number, hasNext: boolean }
 }) {
   return (
     <>
@@ -23,7 +27,7 @@ export default function TrainingCenterList({ centers, query = "", loading = fals
         <label className="field-label" htmlFor="center-search">훈련장명 또는 주소</label>
         <Form action="/" scroll={false}>
           <div className="search-field">
-            <input key={query} id="center-search" name="q" type="search" placeholder="안내받은 훈련장명 또는 주소를 입력해주세요." defaultValue={query} autoComplete="off" aria-describedby="search-hint" enterKeyHint="search" />
+            <input key={query} id="center-search" name="q" type="search" maxLength={200} placeholder="안내받은 훈련장명 또는 주소를 입력해주세요." defaultValue={query} autoComplete="off" aria-describedby="search-hint" enterKeyHint="search" />
             <button className="search-submit" type="submit" aria-label="훈련장 검색"><Icon name="search" /></button>
           </div>
         </Form>
@@ -33,9 +37,9 @@ export default function TrainingCenterList({ centers, query = "", loading = fals
       <section className="results-section" aria-labelledby="results-title" aria-busy={loading}>
         <div className="section-heading">
           <h2 id="results-title">훈련장 목록</h2>
-          <span className="result-count">{loading ? "" : `${centers.length}곳`}</span>
+          <span className="result-count">{loading || error ? "" : `현재 페이지 ${centers.length}곳`}</span>
         </div>
-        {loading ? <div className="empty-state" role="status"><p>훈련장을 불러오고 있어요.</p></div> : centers.length > 0 ? (
+        {error ? <div className="empty-state" role="alert"><h3>훈련장을 불러오지 못했어요</h3><p>{error}</p><FreshLink className="text-button" href="/">다시 불러오기</FreshLink></div> : loading ? <div className="empty-state" role="status"><p>훈련장을 불러오고 있어요.</p></div> : centers.length > 0 ? (
           <div className="center-list">
             {centers.map((center) => (
               <Link className="center-card" key={center.id} href={`/training-centers/${encodeURIComponent(center.id)}`}>
@@ -59,6 +63,7 @@ export default function TrainingCenterList({ centers, query = "", loading = fals
             {query && <Link className="text-button" href="/" scroll={false}>전체 목록 보기 <Icon name="right" width="16" height="16" /></Link>}
           </div>
         )}
+        {!loading && !error && pagination && <Pagination path="/" query={query} {...pagination} />}
       </section>
     </>
   )

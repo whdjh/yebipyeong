@@ -1,12 +1,22 @@
 import { Suspense } from "react"
 import TrainingCenterList from "./_components/training-center-list"
+import { searchTrainingCenters } from "@/lib/training-centers"
+import { parseSearchParams } from "@/lib/validation"
+import { RequestError } from "@/lib/http"
 
 async function SearchResults({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
-  const { q } = await searchParams
-  const query = (Array.isArray(q) ? q[0] : q)?.trim() ?? ""
-
-  // 실제 데이터 조회 연결 전에는 훈련장을 표시하지 않는다.
-  return <TrainingCenterList centers={[]} query={query} />
+  const params = await searchParams
+  let query = ""
+  let result: Awaited<ReturnType<typeof searchTrainingCenters>> | undefined
+  let message: string | undefined
+  try {
+    const options = parseSearchParams(params)
+    query = options.q
+    result = await searchTrainingCenters(options)
+  } catch (error) {
+    message = error instanceof RequestError ? error.message : "훈련장을 불러오지 못했어요. 잠시 후 다시 시도해주세요."
+  }
+  return <TrainingCenterList centers={result?.items ?? []} query={query} pagination={result} error={message} />
 }
 
 export default function Home({ searchParams }: PageProps<"/">) {

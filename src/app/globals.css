@@ -71,6 +71,10 @@ svg { flex-shrink: 0; }
 .empty-state p { color: var(--secondary); font-size: 13px; }
 .text-button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--secondary); font-size: 13px; font-weight: 550; }
 .empty-state .text-button { margin-top: 12px; color: var(--ink); }
+.pagination { display: flex; align-items: center; justify-content: space-between; margin-top: 24px; color: var(--secondary); font-size: 13px; }
+.venue-results { display: grid; gap: 8px; margin-top: 12px; }
+.venue-result { display: block; width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); text-align: left; }
+.venue-result span { display: block; color: var(--secondary); font-size: 12px; }
 
 .detail-page { padding-top: 24px; padding-bottom: 128px; }
 .back-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-left: -4px; color: var(--secondary); font-size: 13px; }
@@ -128,7 +132,7 @@ legend { float: none; width: 100%; padding: 0; }
 .kind-choice:has(:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
 .period-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .select-label { display: block; margin-bottom: 8px; font-size: 12px; color: var(--secondary); }
-.period-fields select { width: 100%; min-height: 52px; border: 1px solid #d9dcd3; border-radius: 10px; padding: 0 12px; background: var(--surface); color: var(--ink); font-size: 14px; }
+.period-fields select, .period-fields input { width: 100%; min-height: 52px; border: 1px solid #d9dcd3; border-radius: 10px; padding: 0 12px; background: var(--surface); color: var(--ink); font-size: 14px; }
 .period-fields select:invalid { color: var(--muted); }
 .edit-info { margin: -8px 0 12px; }
 .question-fields { display: grid; gap: 28px; }
