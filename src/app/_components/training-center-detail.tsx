@@ -37,8 +37,8 @@ export default function TrainingCenterDetail({ center, evaluations, pagination }
           <div><dt>비추천</dt><dd>{center.notRecommendedCount}<span>개</span></dd></div>
         </dl>
 
-        {evaluations.length === 0 ? <div className="empty-state"><h3>{center.evaluationCount === 0 ? "아직 작성된 평가가 없어요" : "이 페이지에 평가가 없어요"}</h3><p>{center.evaluationCount === 0 ? "훈련 경험을 첫 번째로 남겨주세요." : "이전 페이지에서 평가를 확인해주세요."}</p></div> : evaluations.map((evaluation) => <article className="evaluation-card" key={evaluation.id}>
-          <div className="evaluation-meta"><span className="kind-badge">{evaluation.kind}</span><span>{evaluation.period}</span></div>
+        {evaluations.length === 0 ? <div className="empty-state"><h3>{center.evaluationCount === 0 ? "아직 작성된 평가가 없어요" : "이 페이지에 평가가 없어요"}</h3><p>{center.evaluationCount === 0 ? "훈련 경험을 첫 번째로 남겨주세요." : "이전 페이지에서 평가를 확인해주세요."}</p></div> : evaluations.map((evaluation) => <details className="evaluation-card" key={evaluation.id}>
+          <summary className="evaluation-meta"><span className="kind-badge">{evaluation.kind}</span><span className="evaluation-period">{evaluation.period}</span><Icon name="right" className="evaluation-toggle" /></summary>
           <dl className="evaluation-answers">
             {evaluation.answers.map((item, index) => (
               <div key={`${index}-${item.question}`}>
@@ -47,7 +47,7 @@ export default function TrainingCenterDetail({ center, evaluations, pagination }
               </div>
             ))}
           </dl>
-        </article>)}
+        </details>)}
         <Pagination path={`/training-centers/${center.id}`} {...pagination} />
       </section>
     </main>

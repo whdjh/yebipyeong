@@ -90,11 +90,16 @@ svg { flex-shrink: 0; }
 .recommend-summary dd { display: flex; align-items: baseline; gap: 4px; font-size: 28px; font-weight: 700; line-height: 1.4; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
 .recommend-summary > div:first-child dd { color: var(--accent); }
 .recommend-summary dd span { font-size: 13px; font-weight: 400; color: var(--muted); }
-.evaluation-card { padding: 24px 20px 8px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.evaluation-card { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
 .evaluation-card + .evaluation-card { margin-top: 16px; }
-.evaluation-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 24px; }
+.evaluation-meta { display: flex; align-items: center; gap: 12px; padding: 24px 20px; list-style: none; cursor: pointer; }
+.evaluation-meta::-webkit-details-marker { display: none; }
+.evaluation-meta:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; border-radius: 16px; }
 .kind-badge { border-radius: 6px; padding: 4px 9px; background: #f2f3ef; color: #50554a; font-size: 12px; font-weight: 600; }
-.evaluation-meta > :last-child { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.evaluation-period { margin-left: auto; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.evaluation-toggle { color: var(--muted); transform: rotate(90deg); }
+.evaluation-card[open] .evaluation-toggle { transform: rotate(-90deg); }
+.evaluation-answers { padding: 0 20px 8px; }
 .evaluation-answers > div { padding: 0 0 20px; }
 .evaluation-answers > div + div { border-top: 1px solid #f0f0ec; padding-top: 20px; }
 .evaluation-answers dt { margin-bottom: 8px; color: var(--secondary); font-size: 13px; line-height: 1.65; word-break: keep-all; }
@@ -175,7 +180,8 @@ legend { float: none; width: 100%; padding: 0; }
   .detail-intro h1 { font-size: 34px; }
   .evaluation-section { margin-top: 48px; }
   .recommend-summary > div { padding-inline: 28px; }
-  .evaluation-card { padding: 28px 28px 8px; }
+  .evaluation-meta { padding: 28px; }
+  .evaluation-answers { padding-inline: 28px; }
   .evaluation-answers dt { font-size: 14px; }
   .detail-action { position: static; flex-shrink: 0; padding: 0; border: 0; background: transparent; }
   .detail-action .primary-button { width: 160px; }
