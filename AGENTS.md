@@ -12,8 +12,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 기준 문서
 
-- 작업 전 `docs/plan.md`를 확인하고 서비스 요구사항과 제외 범위를 따른다.
-- 문서에서 미정으로 남긴 사항은 임의로 결정하거나 구현하지 않는다.
+- 작업 전 `README.md`와 아래 서비스 원칙을 확인한다.
+- 확정되지 않은 서비스 정책은 임의로 결정하거나 구현하지 않는다.
 
 ## 서비스 원칙
 
